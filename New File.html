@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Official</title>
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+    <style>
+        body { background: #050a10; color: #00f2ff; font-family: sans-serif; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .box { background: #0a111a; padding: 25px; border-radius: 12px; border: 2px solid #00f2ff; width: 85%; max-width: 350px; }
+        input { width: 100%; padding: 12px; margin: 15px 0; background: #000; border: 1px solid #00f2ff; color: #fff; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #00f2ff; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        #status { margin-top: 15px; font-size: 13px; color: #ffae00; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>JARVIS SYSTEM</h2>
+        <input type="text" id="tkn" placeholder="এখানে Token দিন">
+        <button id="btn" onclick="connect()">অ্যাক্টিভেট করুন</button>
+        <div id="status">সিস্টেম রেডি - টোকেন দিন</div>
+    </div>
+
+    <script>
+        async function connect() {
+            const token = document.getElementById('tkn').value;
+            const status = document.getElementById('status');
+            // আপনার সঠিক URL
+            const url = "wss://jarvis-voiceassistant-iaapchbm.livekit.cloud";
+
+            if (!token) {
+                alert("আগে টোকেন দিন ভাই!");
+                return;
+            }
+
+            // যদি লাইব্রেরি না পাওয়া যায় তবে অন্য উপায়ে খোঁজা
+            const LK = window.LiveKit || window.LiveKitClient;
+            
+            if (!LK) {
+                status.innerText = "Error: লাইব্রেরি লোড হয়নি। পেজটি রিফ্রেশ দিন।";
+                return;
+            }
+
+            try {
+                status.innerText = "কানেক্ট হচ্ছে...";
+                const room = new LK.Room();
+
+                room.on('trackSubscribed', (track) => {
+                    if (track.kind === 'audio') {
+                        const el = track.attach();
+                        document.body.appendChild(el);
+                    }
+                });
+
+                await room.connect(url, token);
+                status.innerText = "সফল! Jarvis কথা বলার জন্য প্রস্তুত।";
+                status.style.color = "#00ff00";
+                
+                await room.localParticipant.setMicrophoneEnabled(true);
+            } catch (e) {
+                status.innerText = "ব্যর্থ: " + e.message;
+                console.error(e);
+            }
+        }
+    </script>
+</body>
+</html>
