@@ -1,87 +1,109 @@
+
 <!DOCTYPE html>
-<html lang="bn">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jarvis Final Offline Fix</title>
-    <script>
-        // এই ফাংশনটি লাইব্রেরি লোড না হওয়া পর্যন্ত বাটন অফ রাখবে
-        function checkLib() {
-            if (window.LiveKit) {
-                document.getElementById('btn').disabled = false;
-                document.getElementById('btn').innerText = "ACTIVATE JARVIS";
-                document.getElementById('status').innerText = "সিস্টেম প্রস্তুত! টোকেন দিন।";
-            }
-        }
-    </script>
-    <script src="https://unpkg.com/livekit-client@1.15.4/dist/livekit-client.umd.min.js" onload="checkLib()"></script>
-    
-    <style>
-        body { background: #050a10; color: #00f2ff; font-family: sans-serif; text-align: center; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .box { background: #0a111a; padding: 30px; border-radius: 15px; border: 2px solid #00f2ff; width: 90%; max-width: 380px; box-shadow: 0 0 20px rgba(0,242,255,0.2); }
-        input { width: 100%; padding: 12px; margin: 15px 0; background: #000; border: 1px solid #00f2ff; color: #fff; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #00f2ff; color: #000; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        button:disabled { background: #333; color: #666; cursor: not-allowed; }
-        #status { margin-top: 20px; font-size: 13px; color: #ffae00; font-weight: bold; }
-    </style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title></title>
+<link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
+<link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="./css/jquery-ui-1.10.4.css" type="text/css" rel="stylesheet" >
+<link href="./css/style.css" type="text/css" rel="stylesheet" />
+<link href="./css/component.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="./js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="./js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="./js/popper.min.js"></script>
+<script type="text/javascript" src="./js/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/bootstrap-table.js"></script>
+<script type="text/javascript" src="./script/jq_resize.js"></script>
+<script type="text/javascript" src="./config/config.js"></script>
+<script type="text/javascript" src="./script/skk.js"></script>
 </head>
 <body>
+	<div class="f_top">
+		<a id="logo_a" style="display:block; height:60px; float:left;">
+		<img id="logo_img" border="0" src="" style="margin:9px 0 0 6px;" onerror="imgError(this);" />
+		</a>
+		<div id="logo_after">&nbsp;</div>
+		<div id="welcome">
+		<a id="welcomea" style="display:none" href=""><img id="indexsrc" src="images/btn_quick_setup.png" border="0" onerror="imgError(this);" /></a>
+		</div>
+	</div>
 
-    <div class="box">
-        <h2 style="margin:0; letter-spacing: 2px;">JARVIS UI</h2>
-        <p style="font-size: 10px; color: #444;">ID: iaapchbm</p>
-        
-        <input type="text" id="tokenInput" placeholder="এখানে Access Token পেস্ট করুন">
-        
-        <button id="btn" onclick="startJarvis()" disabled>লাইব্রেরি চেক হচ্ছে...</button>
-        
-        <div id="status">লাইব্রেরি ডাউনলোড হচ্ছে, দয়া করে ৫ সেকেন্ড অপেক্ষা করুন...</div>
-    </div>
+	<div id="f_main_bg" class="f_main_bg">
+		<div id="f_main" class="f_main">
+			<div class="f_left">
+				<span id="version_v" style="font-size:18px;"></span>
+				<div id="menu_top"></div>
+				<div id="menu_layer"></div>
+				<div id="menu_bottom"></div>
+			</div>
+			<div class="f_center" id="content_layer"></div>
+			<div class="f_right">
+				<span id="version_n"></span>
+				<div id="help_top"></div>
+				<div id="help_layer"></div>
+				<div id="help_bottom"></div>
+				<span id="serial_no"></span><!-- jim add 20210812 -->
+			</div>
+		</div>
+	</div>
 
-    <script>
-        // যদি ওপরের লিঙ্ক কাজ না করে, তবে এটি বিকল্প হিসেবে কাজ করবে
-        setTimeout(() => {
-            if (!window.LiveKit) {
-                document.getElementById('status').innerText = "এরর: আপনার ব্রাউজার ফাইল ব্লক করছে। দয়া করে Chrome-এ চেষ্টা করুন।";
-            }
-        }, 10000);
+	<div class="modal fade" id="scan_result" tabindex="-1" role="dialog" aria-labelledby="result_tit" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable" role="document">
+			<div class="modal-content modal-nowidth">
+				<div class="modal-header">
+					<h5 class="modal-title" id="result_tit"></h5>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid" style="padding-left:0px; padding-right: 0px;">
+						<div class="row">
+							<div class="col-md-12 col-sm-12">
+							<table id="list_search_result" data-toggle="table" data-row-style="rowStyle" style="table-layout:fixed;">
+							<thead>
+								<tr>
+									<th data-field="id" class="tbl_data"></th>
+									<th data-field="wl_ss_ssid" class="tbl_data"></th>
+									<th data-field="wl_ss_bssid" class="tbl_data" data-visible="false"></th>
+									<th data-field="wl_ss_channel" class="tbl_data" data-visible="false"></th>
+									<th data-field="wl_ss_mode" class="tbl_data" data-visible="false"></th>
+									<th data-field="wl_ss_secmo" class="tbl_data"></th>
+									<th data-field="wl_ss_secen" class="tbl_data" data-visible="false"></th>
+									<th data-field="wl_ss_sin" class="tbl_data"></th>
+									<th data-field="btn" class="tbl_data"></th>
+								</tr>
+							</thead>
+							</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="btn_close" class="btn df_btn" data-dismiss="modal"></button>
+					<button type="button" id="btn_connect" class="btn df_btn" onclick="Q_connect();"></button>
+					<button type="button" id="btn_refresh" class="btn df_btn" onclick="Q_getAPInfo(true);"></button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-        async function startJarvis() {
-            const token = document.getElementById('tokenInput').value;
-            const status = document.getElementById('status');
-            const url = "wss://jarvis-voiceassistant-iaapchbm.livekit.cloud";
-
-            if (!token) {
-                alert("টোকেন না দিলে চালু হবে না!");
-                return;
-            }
-
-            try {
-                status.innerText = "কানেক্ট করা হচ্ছে... দয়া করে অপেক্ষা করুন";
-                const room = new LiveKit.Room();
-
-                room.on(LiveKit.RoomEvent.TrackSubscribed, (track) => {
-                    if (track.kind === 'audio') {
-                        const audioEl = track.attach();
-                        document.body.appendChild(audioEl);
-                    }
-                });
-
-                await room.connect(url, token);
-                
-                status.innerText = "সফল! Jarvis আপনার কথা শুনছে।";
-                status.style.color = "#00ff00";
-                document.getElementById('btn').innerText = "JARVIS ACTIVE";
-                
-                // মাইক্রোফোন চালু
-                await room.localParticipant.setMicrophoneEnabled(true);
-
-            } catch (e) {
-                console.error(e);
-                status.innerText = "ব্যর্থ: " + e.message;
-                status.style.color = "#ff4444";
-            }
-        }
-    </script>
+	<div class="f_bottom">
+		<div class="f_bottom_border">
+		<div id='co'><a id="url"></a><a id="mail"></a></div>
+		<span id="pcver" style="display:none" onClick="go(1,'i');" ></span>
+		<span id="mobver" style="display:none" onClick="go(0,'i');"></span>
+		</div>
+	</div>
+	<div id="request_layer" style="display:none;position:absolute;"></div>
+	<div id="response_layer" style="display:none;position:absolute;"></div>
+	
+	<div class="pop_ups_s" style="display: none;">
+		
+		<p class="tr069_upgrade_2"></p>
+	
+	</div>
 </body>
+<script type="text/javascript" src="./script/pub_action.js"></script>
+<script type="text/javascript" src="./script/customized.js"></script>
+<script type="text/javascript" src="./script/menu.js"></script>
+<script type="text/javascript" src="./script/init.js"></script>
 </html>
